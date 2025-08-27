@@ -2,7 +2,7 @@ agno
 browser-use==0.5.11
 google-genai
 numpy
-streamlit
+fasthtml
 langchain-google-genai
 langchain-openai
 langchain-anthropic
