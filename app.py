@@ -10,6 +10,13 @@ from browser_use import Browser, Agent as BrowserAgent
 from src.Utilities.utils import controller
 from browser_use.llm import ChatOpenAI
 
+# Optional mobile automation support via droidrun
+try:
+    from droidrun import Droid, Agent as MobileAgent
+except Exception:  # pragma: no cover - droidrun may not be installed
+    Droid = None
+    MobileAgent = None
+
 from src.Prompts.agno_prompts import (
     generate_selenium_pytest_bdd,
     generate_playwright_python,
@@ -83,6 +90,13 @@ def main():
             "Select framework:",
             list(FRAMEWORK_GENERATORS.keys()),
             index=0
+        )
+
+        st.markdown('<div class="sidebar-heading">Execution Target</div>', unsafe_allow_html=True)
+        selected_platform = st.selectbox(
+            "Select platform:",
+            ["Browser", "Mobile"],
+            index=0,
         )
         #About section with tabs
         with st.expander("About"):
@@ -183,9 +197,18 @@ def main():
             # Modify the execute_test function to store more detailed information
             async def execute_test(steps: str):
                 try:
-                    browser = Browser()
+                    if selected_platform == "Browser":
+                        env = Browser()
+                        AgentClass = BrowserAgent
+                        agent_kwargs = {"browser": env}
+                    else:
+                        if Droid is None or MobileAgent is None:
+                            raise RuntimeError("droidrun is required for mobile execution")
+                        env = Droid()
+                        AgentClass = MobileAgent
+                        agent_kwargs = {"droid": env}
 
-                    async with await browser.new_context() as context:
+                    async with await env.new_context() as context:
                         # Parse the Gherkin content to extract scenarios
                         scenarios = []
                         current_scenario = []
@@ -210,13 +233,13 @@ def main():
                         ]
 
                         for scenario in scenarios:
-                            browser_agent = BrowserAgent(
+                            browser_agent = AgentClass(
                                 task=generate_browser_task(scenario),
                                 initial_actions=initial_actions,
                                 llm=ChatOpenAI(model="gpt-4o"),
-                                browser=browser,
                                 use_vision=False,
                                 controller=controller,
+                                **agent_kwargs,
                             )
 
                             # Execute and collect results

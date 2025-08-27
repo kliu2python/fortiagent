@@ -8,3 +8,4 @@ langchain-openai
 langchain-anthropic
 langchain-groq
 Appium-Python-Client
+droidrun
