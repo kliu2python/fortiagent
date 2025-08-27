@@ -9,3 +9,5 @@ langchain-anthropic
 langchain-groq
 Appium-Python-Client
 droidrun
+fastapi
+uvicorn
