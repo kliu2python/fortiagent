@@ -21,6 +21,22 @@ streamlit run app.py
 
 The Streamlit user interface is organized in `src/frontend`. Custom styles live in `src/frontend/styles.css` and are loaded by `src/frontend/ui.py`.
 
+A simple Next.js frontend has been added in the `frontend` directory. It fetches data from the API described below and can be started with:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### API Backend
+
+An experimental FastAPI backend exposes an OpenAPI specification at `/docs`. Run it with:
+
+```bash
+uvicorn backend.main:app --reload
+```
+
 ### Mobile Testing
 
 A dedicated mobile agent can transform manual iOS and Android test cases into

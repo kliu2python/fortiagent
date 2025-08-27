@@ -27,3 +27,6 @@ agent_history.json
 
 # Local configuration
 .env
+
+# Node
+node_modules/
