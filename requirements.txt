@@ -7,3 +7,4 @@ langchain-google-genai
 langchain-openai
 langchain-anthropic
 langchain-groq
+Appium-Python-Client
