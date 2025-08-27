@@ -5,7 +5,7 @@ CSS_PATH = Path(__file__).with_name("styles.css")
 
 def set_page_config() -> None:
     """Configure basic page settings."""
-    st.set_page_config(page_title="AI BROWSER AUTOMATION", layout="wide")
+    st.set_page_config(page_title="FortiAgent", layout="wide")
 
 def load_css() -> None:
     """Load the CSS stylesheet for the Streamlit app."""
@@ -19,7 +19,7 @@ def render_header() -> None:
     st.markdown(
         """
         <div class="header">
-            <h1>AI Browser Automation</h1>
+            <h1>FortiAgent</h1>
         </div>
         """,
         unsafe_allow_html=True,

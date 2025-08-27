@@ -79,11 +79,11 @@ def main():
 
 
     # Main Title with custom styling
-    st.markdown('<h1 class="main-title fade-in">AI BROWSER AUTOMATION</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-title fade-in">FortiAgent</h1>', unsafe_allow_html=True)
     st.markdown('<p class="subtitle fade-in">Prompts to Automated Tests : QA Browser Automation using AI Agents</p>', unsafe_allow_html=True)
     # Sidebar styling
     with st.sidebar:
-        st.markdown('<div class="sidebar-heading">AI BROWSER AUTOMATION</div>', unsafe_allow_html=True)
+        st.markdown('<div class="sidebar-heading">FortiAgent</div>', unsafe_allow_html=True)
 
         st.markdown('<div class="sidebar-heading">Avilable Frameworks</div>', unsafe_allow_html=True)
         selected_framework = st.selectbox(
@@ -333,12 +333,27 @@ def main():
                             "execution_date": st.session_state.get("execution_date", "Unknown")
                         }
 
+                        device_info = {}
+                        if selected_platform == "Mobile":
+                            try:
+                                driver = getattr(context, "driver", None)
+                                if driver is not None:
+                                    if hasattr(driver, "execute_script"):
+                                        info = driver.execute_script("mobile: deviceInfo")
+                                        if asyncio.iscoroutine(info):
+                                            info = await info
+                                        device_info = info
+                                    elif hasattr(driver, "capabilities"):
+                                        device_info = driver.capabilities
+                            except Exception as e:
+                                device_info = {"error": str(e)}
+
                         # Display test execution details
                         st.markdown('<div class="status-success fade-in">Test execution completed!</div>', unsafe_allow_html=True)
 
                         # Display key information in tabs
                         st.markdown('<div class="tab-container fade-in">', unsafe_allow_html=True)
-                        tab1, tab2, tab3, tab4 = st.tabs(["Results", "Actions", "Elements", "Details"])
+                        tab1, tab2, tab3, tab4, tab5 = st.tabs(["Results", "Actions", "Elements", "Details", "Device Info"])
                         with tab1:
                             for i, result in enumerate(all_results):
                                 st.markdown(f'<h4 class="glow-text">Scenario {i+1}</h4>', unsafe_allow_html=True)
@@ -379,6 +394,12 @@ def main():
                             st.markdown('<h4 class="glow-text">Extracted Content</h4>', unsafe_allow_html=True)
                             for content in all_extracted_content:
                                 st.write(content)
+                        with tab5:
+                            if device_info:
+                                st.markdown('<h4 class="glow-text">Device Information</h4>', unsafe_allow_html=True)
+                                st.json(device_info)
+                            else:
+                                st.info("No device information available.")
                         st.markdown('</div>', unsafe_allow_html=True)
 
                 except Exception as e:
